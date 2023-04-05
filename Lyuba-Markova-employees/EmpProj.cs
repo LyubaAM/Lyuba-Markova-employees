@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,11 +20,11 @@ namespace Lyuba_Markova_employees
             EmpProj empProj = new EmpProj();
             empProj.EmpId = int.Parse(values[0]);
             empProj.ProjectId = int.Parse(values[1]);
-            empProj.DateFrom = DateTime.Parse(values[2]);
+            empProj.DateFrom = DateTime.Parse(values[2], CultureInfo.InvariantCulture);
             if (values[3].Trim().ToLower().Equals("null"))
                 empProj.DateTo = null;
             else
-                empProj.DateTo = DateTime.Parse(values[3]);
+                empProj.DateTo = DateTime.Parse(values[3], CultureInfo.InvariantCulture);
 
             return empProj;
         }
