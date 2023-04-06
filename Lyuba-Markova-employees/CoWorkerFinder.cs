@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Lyuba_Markova_employees
 {
     /// <summary>
-    /// Finds all pairs of employees who have worked together on common projects.
+    /// Finds pairs of employees who have worked together.
+    /// Could find all pairs or could find pair of employees who have worked 
+    /// together on common projects for the longest period of time.
     /// </summary>
     internal class CoWorkerFinder
     {
         /// <summary>
-        /// Finds all pairs of employees who have worked together on common projects.
+        /// Finds all pairs of employees who have worked together.
         /// </summary>
-        /// <param name="lstEmployees"></param>
-        /// <returns></returns>
-        public List<CoWorkers> FindCoWorkers(List<EmpProj> lstEmployees)
+        /// <param name="lstEmployees">List with data for every employee who worked on a project from date to date</param>
+        /// <returns>List with all pairs of employees who have worked together</returns>
+        public static List<CoWorkers> FindCoWorkers(List<EmpProj> lstEmployees)
         {
             List<CoWorkers> result = new List<CoWorkers>();
 
@@ -57,13 +54,13 @@ namespace Lyuba_Markova_employees
         }
 
         /// <summary>
-        /// Finds days a pair of employees worked together.
+        /// Finds how many days a pair of employees worked together.
         /// If pair of employees haven't worked together the return value is less than zero.
         /// </summary>
-        /// <param name="emp1"></param>
-        /// <param name="emp2"></param>
-        /// <returns></returns>
-        public int FindDaysWorkedTogether(EmpProj emp1, EmpProj emp2)
+        /// <param name="emp1">Employee 1 worked on a project from date to date</param>
+        /// <param name="emp2">Employee 2 worked on a project from date to date</param>
+        /// <returns>Number of days a pair of employees worked together. If employees haven't worked together the return value is less than zero.</returns>
+        private static int FindDaysWorkedTogether(EmpProj emp1, EmpProj emp2)
         {
             DateTime maxDateFrom;
             DateTime minDateTo;
@@ -81,6 +78,31 @@ namespace Lyuba_Markova_employees
                 minDateTo = emp1DateTo;
 
             return (minDateTo - maxDateFrom).Days;
+        }
+
+        /// <summary>
+        /// Finds all common projects of the pair of employees who have worked together for the longest period of time.
+        /// </summary>
+        /// <param name="lstEmployees">List with data for every employee who worked on a project from date to date</param>
+        /// <returns>List with pairs of employees who have worked together on common projects for the longest period of time</returns>
+        public static IEnumerable<CoWorkers> FindLongestWorkedCoWorkers(List<EmpProj> lstEmployees)
+        {
+            List<CoWorkers> coWorkersByProj = FindCoWorkers(lstEmployees);
+
+            var pairsWorkedOnCommonProj = coWorkersByProj.GroupBy(s => new { s.EmpId1, s.EmpId2 })
+                .Select(g =>
+                new
+                {
+                    pairEmpId1 = g.Key.EmpId1,
+                    pairEmpId2 = g.Key.EmpId2,
+                    pairSum = g.Sum(x => x.DaysWorked)
+                });
+
+            var pairWorkedLongest = pairsWorkedOnCommonProj.MaxBy(x => x.pairSum);
+            
+            IEnumerable<CoWorkers> longestWithProject = coWorkersByProj.Where(g => g.EmpId1 == pairWorkedLongest.pairEmpId1 && g.EmpId2 == pairWorkedLongest.pairEmpId2);
+
+            return longestWithProject;
         }
     }
 }

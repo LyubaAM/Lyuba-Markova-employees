@@ -4,17 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Lyuba_Markova_employees
 {
@@ -23,6 +14,8 @@ namespace Lyuba_Markova_employees
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string separator = ",";
+
         private ObservableCollection<CoWorkers> obsCoWorkers = new ObservableCollection<CoWorkers>();
         public MainWindow()
         {
@@ -34,20 +27,35 @@ namespace Lyuba_Markova_employees
         private void OpenFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Csv files (*.csv)|*.csv|All files (*.*)|*.*";
 
             obsCoWorkers.Clear();
 
             if (openFileDialog.ShowDialog() == true)
             {
-                List<EmpProj> values = File.ReadAllLines(path: openFileDialog.FileName)
-                                              .Select(v => EmpProj.FromCsv(v, ","))
-                                              .ToList();
-                CoWorkerFinder coWorkerFinder = new CoWorkerFinder();
-                List<CoWorkers> coWorkers = coWorkerFinder.FindCoWorkers(values);
-
-                for (int i = 0; i < coWorkers.Count; i++)
+                try
                 {
-                    obsCoWorkers.Add(coWorkers[i]);
+                    List<EmpProj> values = File.ReadAllLines(path: openFileDialog.FileName)
+                                                  .Select(v => EmpProj.FromCsv(v, separator))
+                                                  .ToList();
+
+                    if (values.Count > 0)
+                    {
+                        IEnumerable<CoWorkers> coWorkers = CoWorkerFinder.FindLongestWorkedCoWorkers(values);
+
+                        foreach (CoWorkers worker in coWorkers)
+                        {
+                            obsCoWorkers.Add(worker);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Selected file doesn't contain records.", "Message", MessageBoxButton.OK);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Message", MessageBoxButton.OK);
                 }
             }
         }

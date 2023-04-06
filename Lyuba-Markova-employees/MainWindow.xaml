@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lyuba_Markova_employees"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Pair of employees who have worked together for the longest period of time" Height="450" Width="600">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
@@ -16,7 +16,7 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-        <DataGrid x:Name="LongestWorkedTogether" AutoGenerateColumns="False" CanUserResizeColumns="True">
+        <DataGrid x:Name="LongestWorkedTogether" AutoGenerateColumns="False" CanUserResizeColumns="True" IsReadOnly="True" Margin="0,2,0,0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Employee ID #1" Binding="{Binding EmpId1}"/>
                 <DataGridTextColumn Header="Employee ID #2" Binding="{Binding EmpId2}"/>
