@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Lyuba_Markova_employees
 {
+    /// <summary>
+    /// Employee worked on project from date to date.
+    /// Parse data from csv file.
+    /// </summary>
     internal class EmpProj
     {
         public int EmpId;

@@ -16,5 +16,13 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
+        <DataGrid x:Name="LongestWorkedTogether" AutoGenerateColumns="False" CanUserResizeColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Employee ID #1" Binding="{Binding EmpId1}"/>
+                <DataGridTextColumn Header="Employee ID #2" Binding="{Binding EmpId2}"/>
+                <DataGridTextColumn Header="Project ID" Binding="{Binding ProjectId}"/>
+                <DataGridTextColumn Header="Days worked" Binding="{Binding DaysWorked}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 </Window>

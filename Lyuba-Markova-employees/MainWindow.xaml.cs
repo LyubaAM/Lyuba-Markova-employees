@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,21 +23,32 @@ namespace Lyuba_Markova_employees
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ObservableCollection<CoWorkers> obsCoWorkers = new ObservableCollection<CoWorkers>();
         public MainWindow()
         {
             InitializeComponent();
+
+            LongestWorkedTogether.ItemsSource = obsCoWorkers;
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
+            obsCoWorkers.Clear();
+
             if (openFileDialog.ShowDialog() == true)
             {
                 List<EmpProj> values = File.ReadAllLines(path: openFileDialog.FileName)
                                               .Select(v => EmpProj.FromCsv(v, ","))
                                               .ToList();
-                int p = 4;
+                CoWorkerFinder coWorkerFinder = new CoWorkerFinder();
+                List<CoWorkers> coWorkers = coWorkerFinder.FindCoWorkers(values);
+
+                for (int i = 0; i < coWorkers.Count; i++)
+                {
+                    obsCoWorkers.Add(coWorkers[i]);
+                }
             }
         }
     }
